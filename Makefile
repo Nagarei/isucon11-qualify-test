@@ -43,3 +43,18 @@ slow-show:
 	sudo mysqldumpslow -s t $(SLOW_LOG) | head -n 20
 
 
+# alp
+
+ALPSORT=sum
+ALPM="/api/isu/.+/icon,/api/isu/.+/graph,/api/isu/.+/condition,/api/isu/[-a-z0-9]+,/api/condition/[-a-z0-9]+,/api/catalog/.+,/api/condition\?,/isu/........-....-.+"
+OUTFORMAT=count,method,uri,min,max,sum,avg,p99
+.PHONY: alp
+alp:
+	sudo alp ltsv --file=/var/log/nginx/access.log --nosave-pos --pos /tmp/alp.pos --sort $(ALPSORT) --reverse -o $(OUTFORMAT) -m $(ALPM) -q
+.PHONY: alpsave
+alpsave:
+	sudo alp ltsv --file=/var/log/nginx/access.log --pos /tmp/alp.pos --dump /tmp/alp.dump --sort $(ALPSORT) --reverse -o $(OUTFORMAT) -m $(ALPM) -q
+.PHONY: alpload
+alpload:
+	sudo alp ltsv --load /tmp/alp.dump --sort $(ALPSORT) --reverse -o count,method,uri,min,max,sum,avg,p99 -q
+
