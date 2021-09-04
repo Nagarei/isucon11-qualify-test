@@ -15,7 +15,7 @@ pprof:
 
 # mydql関連
 
-MYSQL_HOST="127.0.0.1"
+MYSQL_HOST="192.168.0.12"
 MYSQL_PORT=3306
 MYSQL_USER=isucon
 MYSQL_DBNAME=isucondition
@@ -28,7 +28,7 @@ SLOW_LOG=/tmp/slow-query.log
 # DBを再起動すると設定はリセットされる
 .PHONY: slow-on
 slow-on:
-	sudo rm $(SLOW_LOG)
+	-sudo rm $(SLOW_LOG)
 	sudo systemctl restart mysql
 	$(MYSQL) -e "set global slow_query_log_file = '$(SLOW_LOG)'; set global long_query_time = 0.001; set global slow_query_log = ON;"
 
@@ -38,6 +38,7 @@ slow-off:
 
 # mysqldumpslowを使ってslow wuery logを出力
 # オプションは合計時間ソート
+# このコマンドは 2 台目から叩かないと意味がない
 .PHONY: slow-show
 slow-show:
 	sudo mysqldumpslow -s t $(SLOW_LOG) | head -n 20
